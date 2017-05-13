@@ -13,11 +13,13 @@ class ViewController: UIViewController {
     
     let connectservice = ConnectionManager()
     var input: String = ""
+    var uname: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
         connectservice.delegate = self
         InputField.becomeFirstResponder()
+        self.MessageView.layoutManager.allowsNonContiguousLayout = false
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -34,10 +36,24 @@ class ViewController: UIViewController {
     @IBOutlet var MessageView: UITextView!
     
     @IBAction func SendInput(_ sender: UIButton) {
-        input = UIDevice.current.name + ": " + InputField.text!
-        MessageView.text = MessageView.text + "\n \(input)"
-        InputField.text = ""
-        connectservice.send(message: input)
+        if (logininput == ""){
+            uname = UIDevice.current.name
+        } else {
+            uname = logininput
+        }
+        if (InputField.text != ""){
+            input = uname + ": " + InputField.text!
+            MessageView.text = MessageView.text + "\(input) \n"
+            InputField.text = ""
+            connectservice.send(message: input)
+            let strlen:Int = self.MessageView.text.characters.count
+            self.MessageView.scrollRangeToVisible(NSMakeRange(strlen-1, 0))
+        }
+    }
+    
+    func encrypt( input: String){
+        let str = String(describing: input.cString(using: String.Encoding.utf8))
+        MessageView.text = str
     }
 
 }
@@ -47,16 +63,16 @@ extension ViewController : ConnectionManagerDelegate {
     func connectedDevicesChanged(manager: ConnectionManager, connectedDevices: [String]) {
         OperationQueue.main.addOperation {
             if(connectedDevices != [""]){
-                self.ConnectionDisplay.text = "Partners: \(connectedDevices)"
+                self.ConnectionDisplay.text = "Members: You, \(connectedDevices)"
             } else {
-            self.ConnectionDisplay.text = "Partners: None"
+            self.ConnectionDisplay.text = "Membera: Just you"
             }
         }
     }
     
     func messagerecieved(manager: ConnectionManager, messagestring: String) {
         OperationQueue.main.addOperation {
-            self.MessageView.text = self.MessageView.text + "\n \(self.connectservice)"
+            self.MessageView.text = self.MessageView.text + "\(messagestring) \n"
         }
     }
 }
