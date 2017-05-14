@@ -49,6 +49,7 @@ class ConnectionManager: NSObject {
     }()
     
     
+    
     func send(message : String) {
         NSLog("%@", "sendmessage: \(message) to \(session.connectedPeers.count) peers")
         
