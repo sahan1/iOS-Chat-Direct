@@ -21,7 +21,7 @@ class ConnectionManager: NSObject {
     
     var delegate : ConnectionManagerDelegate?
 
-    private let connecttype = "chatdirect"
+    private let connecttype = roomname
     private let deviceid = MCPeerID(displayName: UIDevice.current.name)
     private let serviceAdvertiser : MCNearbyServiceAdvertiser
     private let serviceBrowser : MCNearbyServiceBrowser
@@ -47,6 +47,7 @@ class ConnectionManager: NSObject {
         session.delegate = self
         return session
     }()
+    
     
     
     func send(message : String) {
